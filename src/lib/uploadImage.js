@@ -1,4 +1,4 @@
-import { writeFile } from "fs/promises";
+import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 
 export async function uploadImage(file) {
@@ -9,13 +9,13 @@ export async function uploadImage(file) {
   const filename = `${Date.now()}_${file.name}`;
   const buffer = Buffer.from(await file.arrayBuffer());
 
-  const uploadPath = path.join(
-    process.cwd(),
-    "public/uploads",
-    filename
-  );
+  const uploadDir = path.join(process.cwd(), "public/uploads");
+
+  await mkdir(uploadDir, { recursive: true });
+
+  const uploadPath = path.join(uploadDir, filename);
 
   await writeFile(uploadPath, buffer);
 
-  return `${filename}`; // image path return
+  return filename;
 }
